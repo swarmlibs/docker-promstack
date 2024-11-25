@@ -1,5 +1,5 @@
 it:
-	docker buildx bake --load
+	docker buildx bake --load dev
 
 install:
 	docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock swarmlibs/promstack:dev install
