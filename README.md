@@ -1,7 +1,5 @@
 # About
-
-> WIP
-
+A promstack installer as container image
 
 ## Usage
 
