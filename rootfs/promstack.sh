@@ -55,10 +55,29 @@ if [[ "${1}" == "install" ]]; then
 		entrypoint_log "$ME: Deploying promstack stack..."
 		docker stack deploy --quiet --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
 	}
+elif [[ "${1}" == "upgrade" ]]; then
+	if ! docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
+		entrypoint_log "$ME: The 'promstack' stack is not deployed."
+		entrypoint_log "$ME: You must deploy the 'promstack' stack before you can upgrade it."
+		exit 1
+	fi
+
+	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
+	git clone --quiet --depth 1 ${PROMSTACK_REPO} "${PROMSTACK_TMPDIR}" || {
+		entrypoint_log "$ME: ERROR: Failed to clone promstack repository."
+		exit 1
+	}
+
+	cd "${PROMSTACK_TMPDIR}" && {
+		entrypoint_log "$ME: Upgrading promstack stack..."
+		docker stack deploy --quiet --prune --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+	}
 elif [[ "${1}" == "uninstall" ]]; then
 	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
 	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
-		docker stack rm --detach=false promstack
+		docker stack rm promstack
+		sleep 10
+		entrypoint_log "$ME: The 'promstack' stack removed..."
 	else
 		entrypoint_log "$ME: The 'promstack' stack is not deployed."
 	fi
