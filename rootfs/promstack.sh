@@ -21,13 +21,16 @@ echo '   / __ \_________  ____ ___  _____/ /_____ ______/ /__'
 echo '  / /_/ / ___/ __ \/ __ `__ \/ ___/ __/ __ `/ ___/ //_/'
 echo ' / ____/ /  / /_/ / / / / / (__  ) /_/ /_/ / /__/ ,<   '
 echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
-echo '                                                       '
+echo ''
+echo 'A Docker Stack deployment for the monitoring suite for Docker Swarm includes (Grafana, Prometheus, cAdvisor, Node exporter and Blackbox prober exporter)'
+echo 'https://github.com/swarmlibs/promstack'
+echo ''
 
 if [[ "${1}" == "install" ]]; then
 	if ! docker stack ls --format "{{.Name}}" | grep swarmlibs >/dev/null; then
 		entrypoint_log "$ME: The 'swarmlibs' stack is not deployed."
 		entrypoint_log "$ME: You must deploy the 'swarmlibs' stack otherwise the 'promstack' deployment will not function correctly."
-		entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."
+		entrypoint_log "$ME: Please refer to the documentation for more information."
 		entrypoint_log "$ME: https://github.com/swarmlibs/swarmlibs"
 		entrypoint_log "$ME:"
 		entrypoint_log "$ME: Or you can deploy the 'swarmlibs' stack by running the following command:"
@@ -106,9 +109,10 @@ elif [[ "${1}" == "upgrade" ]]; then
 elif [[ "${1}" == "uninstall" ]]; then
 	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
 	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
-		docker stack rm promstack
-		sleep 10
-		entrypoint_log "$ME: The 'promstack' stack removed..."
+		docker stack rm promstack && {
+			echo "$ME: Grace period to allow services to shutdown..."
+			sleep 15
+		}
 	else
 		entrypoint_log "$ME: The 'promstack' stack is not deployed."
 	fi
