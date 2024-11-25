@@ -104,8 +104,6 @@ elif [[ "${1}" == "upgrade" ]]; then
 		entrypoint_log "$ME: The upgrade is complete, it may take a while for all services to start."
 		entrypoint_log "$ME: You can access the services via the following URLs:"
 		entrypoint_log "$ME: - Grafana: http://${DOCKER_NODE_IP}:3000"
-		entrypoint_log "$ME:     Username: grafana"
-		entrypoint_log "$ME:     Password: grafana"
 		entrypoint_log "$ME: - Prometheus: http://${DOCKER_NODE_IP}:9090"
 	}
 elif [[ "${1}" == "uninstall" ]]; then
