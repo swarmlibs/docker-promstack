@@ -8,16 +8,30 @@ entrypoint_log() {
 }
 
 ME=$(basename "$0")
+PROMSTACK_REPO="https://github.com/swarmlibs/promstack.git"
+PROMSTACK_TMPDIR=`mktemp -d -t promstack-XXXXXX`
 
 test -e "/var/run/docker.sock" || {
 	entrypoint_log "$ME: ERROR: Missing docker.sock. You must run the bootstrap container with \"-v /var/run/docker.sock:/var/run/docker.sock\""
 	exit 1
 }
 
-if [[ "${1}" == "install" ]]; then
-	PROMSTACK_REPO="https://github.com/swarmlibs/promstack.git"
-	PROMSTACK_TMPDIR=`mktemp -d -t promstack-XXXXXX`
+echo '    ____                            __             __  '
+echo '   / __ \_________  ____ ___  _____/ /_____ ______/ /__'
+echo '  / /_/ / ___/ __ \/ __ `__ \/ ___/ __/ __ `/ ___/ //_/'
+echo ' / ____/ /  / /_/ / / / / / (__  ) /_/ /_/ / /__/ ,<   '
+echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
+echo '                                                       '
 
+if ! docker stack ls --format "{{.Name}}" | grep swarmlibss >/dev/null; then
+	entrypoint_log "$ME: The 'swarmlibs' stack is not deployed."
+	entrypoint_log "$ME: You must deploy the 'swarmlibs' stack otherwise the 'promstack' deployment will not function correctly."
+	entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."
+	entrypoint_log "$ME: https://github.com/swarmlibs/swarmlibs"
+	entrypoint_log "$ME:"
+fi
+
+if [[ "${1}" == "install" ]]; then
 	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
 	git clone --quiet --depth 1 ${PROMSTACK_REPO} "${PROMSTACK_TMPDIR}" || {
 		entrypoint_log "$ME: ERROR: Failed to clone promstack repository."
@@ -39,7 +53,7 @@ if [[ "${1}" == "install" ]]; then
 		fi
 
 		entrypoint_log "$ME: Deploying promstack stack..."
-		docker stack deploy --quiet --prune --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		docker stack deploy --quiet --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
 	}
 elif [[ "${1}" == "uninstall" ]]; then
 	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
