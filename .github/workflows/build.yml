@@ -50,8 +50,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            docker.io/${{ github.actor }}/promstack
-            ghcr.io/${{ github.actor }}/promstack
+            docker.io/${{ github.repository_owner }}/promstack
+            ghcr.io/${{ github.repository_owner }}/promstack
           tags: |
             type=ref,event=branch
             type=ref,event=pr
