@@ -23,15 +23,15 @@ echo ' / ____/ /  / /_/ / / / / / (__  ) /_/ /_/ / /__/ ,<   '
 echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
 echo '                                                       '
 
-if ! docker stack ls --format "{{.Name}}" | grep swarmlibss >/dev/null; then
-	entrypoint_log "$ME: The 'swarmlibs' stack is not deployed."
-	entrypoint_log "$ME: You must deploy the 'swarmlibs' stack otherwise the 'promstack' deployment will not function correctly."
-	entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."
-	entrypoint_log "$ME: https://github.com/swarmlibs/swarmlibs"
-	entrypoint_log "$ME:"
-fi
-
 if [[ "${1}" == "install" ]]; then
+	if ! docker stack ls --format "{{.Name}}" | grep swarmlibss >/dev/null; then
+		entrypoint_log "$ME: The 'swarmlibs' stack is not deployed."
+		entrypoint_log "$ME: You must deploy the 'swarmlibs' stack otherwise the 'promstack' deployment will not function correctly."
+		entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."
+		entrypoint_log "$ME: https://github.com/swarmlibs/swarmlibs"
+		entrypoint_log "$ME:"
+	fi
+
 	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
 	git clone --quiet --depth 1 ${PROMSTACK_REPO} "${PROMSTACK_TMPDIR}" || {
 		entrypoint_log "$ME: ERROR: Failed to clone promstack repository."
@@ -58,7 +58,7 @@ if [[ "${1}" == "install" ]]; then
 elif [[ "${1}" == "uninstall" ]]; then
 	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
 	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
-		docker stack rm promstack
+		docker stack rm --detach=false promstack
 	else
 		entrypoint_log "$ME: The 'promstack' stack is not deployed."
 	fi
