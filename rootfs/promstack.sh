@@ -43,9 +43,9 @@ if [[ "${1}" == "install" ]]; then
 			entrypoint_log "$ME: Creating 'public' network..."
 			docker network create --scope=swarm --driver=overlay --attachable public >/dev/null
 		fi
-		if ! docker network inspect promstack >/dev/null 2>&1; then
-			entrypoint_log "$ME: Creating 'promstack' network..."
-			docker network create --scope=swarm --driver=overlay --attachable promstack >/dev/null
+		if ! docker network inspect prometheus >/dev/null 2>&1; then
+			entrypoint_log "$ME: Creating 'prometheus' network..."
+			docker network create --scope=swarm --driver=overlay --attachable prometheus >/dev/null
 		fi
 		if ! docker network inspect prometheus_gwnetwork >/dev/null 2>&1; then
 			entrypoint_log "$ME: Creating 'prometheus_gwnetwork' network..."
@@ -110,16 +110,10 @@ elif [[ "${1}" == "uninstall" ]]; then
 		entrypoint_log "$ME: The 'promstack' stack is not deployed."
 	fi
 
-	if docker network rm public >/dev/null 2>&1; then
-		entrypoint_log "$ME: The 'public' network removed..."
+	if docker network rm prometheus >/dev/null 2>&1; then
+		entrypoint_log "$ME: The 'prometheus' network removed..."
 	else
-		entrypoint_log "$ME: The 'public' network is not removable. It may be in use by other services."
-	fi
-
-	if docker network rm promstack >/dev/null 2>&1; then
-		entrypoint_log "$ME: The 'promstack' network removed..."
-	else
-		entrypoint_log "$ME: The 'promstack' network is not removable. It may be in use by other services."
+		entrypoint_log "$ME: The 'prometheus' network is not removable. It may be in use by other services."
 	fi
 
 	if docker network rm prometheus_gwnetwork >/dev/null 2>&1; then
