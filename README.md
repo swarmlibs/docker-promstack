@@ -5,7 +5,7 @@ A promstack installer as container image
 
 **Install promstack**
 ```sh
-docker run -it --rm \
+$ docker run -it --rm \
     --name promstack \
     -v /var/run/docker.sock:/var/run/docker.sock \
     swarmlibs/promstack:dev install
@@ -13,7 +13,7 @@ docker run -it --rm \
 
 **Upgrade promstack**
 ```sh
-docker run -it --rm \
+$ docker run -it --rm \
     --name promstack \
     -v /var/run/docker.sock:/var/run/docker.sock \
     swarmlibs/promstack:dev upgrade
@@ -21,7 +21,7 @@ docker run -it --rm \
 
 **Uninstall promstack**
 ```sh
-docker run -it --rm \
+$ docker run -it --rm \
     --name promstack \
     -v /var/run/docker.sock:/var/run/docker.sock \
     swarmlibs/promstack:dev uninstall
