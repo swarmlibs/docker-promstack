@@ -127,6 +127,10 @@ elif [[ "${1}" == "uninstall" ]]; then
 	else
 		entrypoint_log "$ME: The 'prometheus_gwnetwork' network is not removable. It may be in use by other services."
 	fi
+
+	entrypoint_log "$ME:"
+	entrypoint_log "$ME: The removal is complete, the 'promstack' stack and associated networks have been removed."
+	entrypoint_log "$ME: It may take a while for all services to be completely removed."
 else
 	entrypoint_log "$ME: Unknown command: ${1}"
 	entrypoint_log "$ME: Usage: ${ME} [install|uninstall]"
