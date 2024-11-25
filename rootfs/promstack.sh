@@ -18,19 +18,6 @@ if [[ "${1}" == "install" ]]; then
 	PROMSTACK_REPO="https://github.com/swarmlibs/promstack.git"
 	PROMSTACK_TMPDIR=`mktemp -d -t promstack-XXXXXX`
 
-	if ! docker network inspect public >/dev/null 2>&1; then
-		entrypoint_log "$ME: Creating 'public' network..."
-		docker network create --scope=swarm --driver=overlay --attachable public >/dev/null
-	fi
-	if ! docker network inspect promstack >/dev/null 2>&1; then
-		entrypoint_log "$ME: Creating 'promstack' network..."
-		docker network create --scope=swarm --driver=overlay --attachable promstack >/dev/null
-	fi
-	if ! docker network inspect prometheus_gwnetwork >/dev/null 2>&1; then
-		entrypoint_log "$ME: Creating 'prometheus_gwnetwork' network..."
-		docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork >/dev/null
-	fi
-
 	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
 	git clone --quiet --depth 1 ${PROMSTACK_REPO} "${PROMSTACK_TMPDIR}" || {
 		entrypoint_log "$ME: ERROR: Failed to clone promstack repository."
@@ -38,6 +25,19 @@ if [[ "${1}" == "install" ]]; then
 	}
 
 	cd "${PROMSTACK_TMPDIR}" && {
+		if ! docker network inspect public >/dev/null 2>&1; then
+			entrypoint_log "$ME: Creating 'public' network..."
+			docker network create --scope=swarm --driver=overlay --attachable public >/dev/null
+		fi
+		if ! docker network inspect promstack >/dev/null 2>&1; then
+			entrypoint_log "$ME: Creating 'promstack' network..."
+			docker network create --scope=swarm --driver=overlay --attachable promstack >/dev/null
+		fi
+		if ! docker network inspect prometheus_gwnetwork >/dev/null 2>&1; then
+			entrypoint_log "$ME: Creating 'prometheus_gwnetwork' network..."
+			docker network create --scope=swarm --driver=overlay --attachable prometheus_gwnetwork >/dev/null
+		fi
+
 		entrypoint_log "$ME: Deploying promstack stack..."
 		docker stack deploy --quiet --prune --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
 	}
