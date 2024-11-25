@@ -121,24 +121,26 @@ elif [[ "${1}" == "uninstall" ]]; then
 			echo "$ME: Grace period to allow services to shutdown..."
 			sleep 15
 		}
-	else
-		entrypoint_log "$ME: The promstack is not deployed."
 	fi
 
-	if docker network rm prometheus >/dev/null 2>&1; then
-		entrypoint_log "$ME: The 'prometheus' network removed..."
-	else
-		entrypoint_log "$ME: The 'prometheus' network is not removable. It may be in use by other services."
+	entrypoint_log "$ME: Attempting to remove networks..."
+	if docker network inspect prometheus >/dev/null 2>&1; then
+		if docker network rm prometheus >/dev/null 2>&1; then
+			entrypoint_log "$ME: The 'prometheus' network removed..."
+		else
+			entrypoint_log "$ME: The 'prometheus' network is not removable. It may be in use by other services."
+		fi
 	fi
-
-	if docker network rm prometheus_gwnetwork >/dev/null 2>&1; then
-		entrypoint_log "$ME: The 'prometheus_gwnetwork' network removed..."
-	else
-		entrypoint_log "$ME: The 'prometheus_gwnetwork' network is not removable. It may be in use by other services."
+	if docker network inspect prometheus_gwnetwork >/dev/null 2>&1; then
+		if docker network rm prometheus_gwnetwork >/dev/null 2>&1; then
+			entrypoint_log "$ME: The 'prometheus_gwnetwork' network removed..."
+		else
+			entrypoint_log "$ME: The 'prometheus_gwnetwork' network is not removable. It may be in use by other services."
+		fi
 	fi
 
 	entrypoint_log "$ME:"
-	entrypoint_log "$ME: The removal is complete, the promstack and associated networks have been removed."
+	entrypoint_log "$ME: The removal is complete, promstack and associated networks have been removed."
 	entrypoint_log "$ME: It may take a while for all services to be completely removed."
 else
 	entrypoint_log "$ME: Unknown command: ${1}"
