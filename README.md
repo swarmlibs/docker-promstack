@@ -1,5 +1,5 @@
 # About
-An unattended installation of `promstack` stack.
+An unattended installer for `promstack` stack.
 
 ## Usage
 The installer provides the following commands:
