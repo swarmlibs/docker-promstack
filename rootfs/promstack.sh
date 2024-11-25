@@ -30,6 +30,9 @@ if [[ "${1}" == "install" ]]; then
 		entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."
 		entrypoint_log "$ME: https://github.com/swarmlibs/swarmlibs"
 		entrypoint_log "$ME:"
+		entrypoint_log "$ME: Or you can deploy the 'swarmlibs' stack by running the following command:"
+		entrypoint_log "$ME: curl -L https://raw.githubusercontent.com/swarmlibs/swarmlibs/main/docker-stack.yml | docker stack deploy -c - swarmlibs"
+		entrypoint_log "$ME:"
 	fi
 
 	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
