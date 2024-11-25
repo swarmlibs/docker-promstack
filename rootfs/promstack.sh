@@ -38,6 +38,13 @@ if [[ "${1}" == "install" ]]; then
 		entrypoint_log "$ME:"
 	fi
 
+	DOCKER_STACK_DEPLOY_ARGS=""
+	# If the 'promstack' stack is already deployed, we want to use the --resolve-image=never flag
+	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
+		entrypoint_log "$ME: The 'promstack' stack is already deployed, using --resolve-image=never flag to prevent image resolution."
+		DOCKER_STACK_DEPLOY_ARGS="--resolve-image=never"
+	fi
+
 	entrypoint_log "$ME: Downloading promstack deployment manifest from ${PROMSTACK_REPO}..."
 	git clone --quiet --depth 1 ${PROMSTACK_REPO} "${PROMSTACK_TMPDIR}" || {
 		entrypoint_log "$ME: ERROR: Failed to clone promstack repository."
@@ -45,6 +52,7 @@ if [[ "${1}" == "install" ]]; then
 	}
 
 	cd "${PROMSTACK_TMPDIR}" && {
+		entrypoint_log "$ME: Checking for required networks..."
 		if ! docker network inspect public >/dev/null 2>&1; then
 			entrypoint_log "$ME: Creating 'public' network..."
 			docker network create --scope=swarm --driver=overlay --attachable public >/dev/null
@@ -60,6 +68,7 @@ if [[ "${1}" == "install" ]]; then
 
 		entrypoint_log "$ME: Deploying promstack stack..."
 		docker stack deploy \
+				${DOCKER_STACK_DEPLOY_ARGS} \
 				--quiet \
 				--with-registry-auth \
 				--detach=true \
