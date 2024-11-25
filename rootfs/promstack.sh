@@ -63,7 +63,6 @@ if [[ "${1}" == "install" ]]; then
 				--quiet \
 				--with-registry-auth \
 				--detach=true \
-				--resolve-image=never \
 				--compose-file=docker-stack.yml \
 			promstack | while read line; do entrypoint_log "$ME: - $line"; done
 		entrypoint_log "$ME:"
