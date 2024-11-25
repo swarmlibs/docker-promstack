@@ -53,7 +53,12 @@ if [[ "${1}" == "install" ]]; then
 		fi
 
 		entrypoint_log "$ME: Deploying promstack stack..."
-		docker stack deploy --quiet --with-registry-auth --detach=true --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		docker stack deploy \
+				--quiet \
+				--with-registry-auth \
+				--detach=true \
+				--compose-file=docker-stack.yml \
+			promstack | while read line; do entrypoint_log "$ME: - $line"; done
 		entrypoint_log "$ME:"
 
 		DOCKER_NODE_IP=$(docker node inspect --format '{{.Status.Addr}}' self)
@@ -79,7 +84,13 @@ elif [[ "${1}" == "upgrade" ]]; then
 
 	cd "${PROMSTACK_TMPDIR}" && {
 		entrypoint_log "$ME: Upgrading promstack stack..."
-		docker stack deploy --quiet --prune --with-registry-auth --detach=true --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		docker stack deploy \
+				--quiet \
+				--prune \
+				--with-registry-auth \
+				--detach=true \
+				--compose-file=docker-stack.yml \
+			promstack | while read line; do entrypoint_log "$ME: - $line"; done
 
 		DOCKER_NODE_IP=$(docker node inspect --format '{{.Status.Addr}}' self)
 		entrypoint_log "$ME: The upgrade is complete, it may take a while for all services to start."
