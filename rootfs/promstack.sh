@@ -53,7 +53,16 @@ if [[ "${1}" == "install" ]]; then
 		fi
 
 		entrypoint_log "$ME: Deploying promstack stack..."
-		docker stack deploy --quiet --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		docker stack deploy --quiet --with-registry-auth --detach=true --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		entrypoint_log "$ME:"
+
+		DOCKER_NODE_IP=$(docker node inspect --format '{{.Status.Addr}}' self)
+		entrypoint_log "$ME: The deployment is complete, it may take a while for all services to start."
+		entrypoint_log "$ME: You can access the services via the following URLs:"
+		entrypoint_log "$ME: - Grafana: http://${DOCKER_NODE_IP}:3000"
+		entrypoint_log "$ME:     Username: grafana"
+		entrypoint_log "$ME:     Password: grafana"
+		entrypoint_log "$ME: - Prometheus: http://${DOCKER_NODE_IP}:9090"
 	}
 elif [[ "${1}" == "upgrade" ]]; then
 	if ! docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
@@ -70,7 +79,15 @@ elif [[ "${1}" == "upgrade" ]]; then
 
 	cd "${PROMSTACK_TMPDIR}" && {
 		entrypoint_log "$ME: Upgrading promstack stack..."
-		docker stack deploy --quiet --prune --with-registry-auth --detach=false --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+		docker stack deploy --quiet --prune --with-registry-auth --detach=true --compose-file=docker-stack.yml promstack | while read line; do entrypoint_log "$ME: - $line"; done
+
+		DOCKER_NODE_IP=$(docker node inspect --format '{{.Status.Addr}}' self)
+		entrypoint_log "$ME: The upgrade is complete, it may take a while for all services to start."
+		entrypoint_log "$ME: You can access the services via the following URLs:"
+		entrypoint_log "$ME: - Grafana: http://${DOCKER_NODE_IP}:3000"
+		entrypoint_log "$ME:     Username: grafana"
+		entrypoint_log "$ME:     Password: grafana"
+		entrypoint_log "$ME: - Prometheus: http://${DOCKER_NODE_IP}:9090"
 	}
 elif [[ "${1}" == "uninstall" ]]; then
 	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
