@@ -24,7 +24,7 @@ echo '/_/   /_/   \____/_/ /_/ /_/____/\__/\__,_/\___/_/|_|  '
 echo '                                                       '
 
 if [[ "${1}" == "install" ]]; then
-	if ! docker stack ls --format "{{.Name}}" | grep swarmlibss >/dev/null; then
+	if ! docker stack ls --format "{{.Name}}" | grep swarmlibs >/dev/null; then
 		entrypoint_log "$ME: The 'swarmlibs' stack is not deployed."
 		entrypoint_log "$ME: You must deploy the 'swarmlibs' stack otherwise the 'promstack' deployment will not function correctly."
 		entrypoint_log "$ME: Please refer to the 'swarmlibs' documentation for more information."

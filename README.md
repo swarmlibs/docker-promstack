@@ -1,9 +1,14 @@
 # About
-A promstack installer as container image
+An unattended installation of `promstack` stack.
 
 ## Usage
+The installer provides the following commands:
+- `install` - Install the promstack stack.
+- `upgrade` - Upgrade the promstack stack.
+- `uninstall` - Uninstall the promstack stack.
 
-**Install promstack**
+### Install `promstack` stack
+Run the following command to install the promstack stack:
 ```sh
 $ docker run -it --rm \
     --name promstack \
@@ -11,7 +16,8 @@ $ docker run -it --rm \
     swarmlibs/promstack:dev install
 ```
 
-**Upgrade promstack**
+### Upgrade `promstack` stack
+Run the following command to upgrade the promstack stack:
 ```sh
 $ docker run -it --rm \
     --name promstack \
@@ -19,7 +25,8 @@ $ docker run -it --rm \
     swarmlibs/promstack:dev upgrade
 ```
 
-**Uninstall promstack**
+### Uninstall `promstack` stack
+Run the following command to uninstall the promstack stack:
 ```sh
 $ docker run -it --rm \
     --name promstack \
