@@ -41,7 +41,7 @@ if [[ "${1}" == "install" ]]; then
 	DOCKER_STACK_DEPLOY_ARGS=""
 	# If the 'promstack' stack is already deployed, we want to use the --resolve-image=never flag
 	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
-		entrypoint_log "$ME: The 'promstack' stack is already deployed, using --resolve-image=never flag to prevent image resolution."
+		entrypoint_log "$ME: The promstack stack is already deployed, using --resolve-image=never flag to prevent image resolution."
 		DOCKER_STACK_DEPLOY_ARGS="--resolve-image=never"
 	fi
 
@@ -86,7 +86,7 @@ if [[ "${1}" == "install" ]]; then
 	}
 elif [[ "${1}" == "upgrade" ]]; then
 	if ! docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
-		entrypoint_log "$ME: The 'promstack' stack is not deployed."
+		entrypoint_log "$ME: The promstack is not deployed."
 		entrypoint_log "$ME: You must deploy the 'promstack' stack before you can upgrade it."
 		exit 1
 	fi
@@ -115,14 +115,14 @@ elif [[ "${1}" == "upgrade" ]]; then
 		entrypoint_log "$ME: - Prometheus: http://${DOCKER_NODE_IP}:9090"
 	}
 elif [[ "${1}" == "uninstall" ]]; then
-	entrypoint_log "$ME: Attempting to remove the 'promstack' stack..."
+	entrypoint_log "$ME: Attempting to remove the promstack..."
 	if docker stack ls --format "{{.Name}}" | grep promstack >/dev/null; then
 		docker stack rm promstack && {
 			echo "$ME: Grace period to allow services to shutdown..."
 			sleep 15
 		}
 	else
-		entrypoint_log "$ME: The 'promstack' stack is not deployed."
+		entrypoint_log "$ME: The promstack is not deployed."
 	fi
 
 	if docker network rm prometheus >/dev/null 2>&1; then
@@ -138,7 +138,7 @@ elif [[ "${1}" == "uninstall" ]]; then
 	fi
 
 	entrypoint_log "$ME:"
-	entrypoint_log "$ME: The removal is complete, the 'promstack' stack and associated networks have been removed."
+	entrypoint_log "$ME: The removal is complete, the promstack and associated networks have been removed."
 	entrypoint_log "$ME: It may take a while for all services to be completely removed."
 else
 	entrypoint_log "$ME: Unknown command: ${1}"
